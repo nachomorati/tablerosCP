@@ -43,5 +43,6 @@ public class TablerosDBHelper extends SQLiteOpenHelper {
                     TablerosContract.TablerosEntry.COLUMN_TITLE_IDENTIFICACIONES + " INTEGER," +
                     TablerosContract.TablerosEntry.COLUMN_TITLE_EN_PLANO + " INTEGER," +
                     TablerosContract.TablerosEntry.COLUMN_TITLE_PLANO + " TEXT," +
+                    TablerosContract.TablerosEntry.COLUMN_TITLE_SECTOR + " TEXT," +
                     TablerosContract.TablerosEntry.COLUMN_TITLE_LLAVES + " TEXT)";
 }

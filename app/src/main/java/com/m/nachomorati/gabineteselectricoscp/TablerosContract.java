@@ -20,6 +20,7 @@ public class TablerosContract {
         public static final String COLUMN_TITLE_EN_PLANO = "tab_en_plano";
         public static final String COLUMN_TITLE_PLANO = "tab_plano";
         public static final String COLUMN_TITLE_LLAVES = "tab_llaves";
+        public static final String COLUMN_TITLE_SECTOR = "tab_sector";
     }
 
 

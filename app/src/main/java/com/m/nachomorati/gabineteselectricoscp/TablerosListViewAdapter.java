@@ -48,6 +48,7 @@ public class TablerosListViewAdapter extends BaseAdapter {
 
         ((TextView)v.findViewById(R.id.tv_tablero_numero)).setText(String.valueOf(mTablero.getNumero()));
         ((TextView)v.findViewById(R.id.tv_tablero_ubicacion)).setText(String.valueOf(mTablero.getUbicacion()));
+        ((TextView)v.findViewById(R.id.tv_tablero_sector)).setText(String.valueOf(mTablero.getSector()));
 
         return v;
     }

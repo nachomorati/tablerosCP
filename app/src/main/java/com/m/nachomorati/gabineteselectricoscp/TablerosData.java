@@ -34,6 +34,15 @@ public class TablerosData {
                 tablero.setLlaves(Helper.strLlaves2ArrLst(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_LLAVES))));
                 tablero.setArch_flash(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_ARCH_FLASH))));
                 tablero.setCortocircuito(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_CORTOCIRCUITO))));
+                tablero.set_id(c.getInt(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE__ID)));
+                tablero.setCandado(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_CANDADO))));
+                tablero.setReq_candado(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_REQ_CANDADO))));
+                tablero.setContrafrente(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_CONTRAFRENTE))));
+                tablero.setReq_contrafrente(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_REQ_CONTRAFRENTE))));
+                tablero.setEn_plano_general(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_EN_PLANO))));
+                tablero.setPlano(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_PLANO)));
+                tablero.setSector(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_SECTOR)));
+                tablero.setIdentificaciones(Boolean.parseBoolean(c.getString(c.getColumnIndex(TablerosContract.TablerosEntry.COLUMN_TITLE_IDENTIFICACIONES))));
                 mTableros.add(tablero);
             }
         }

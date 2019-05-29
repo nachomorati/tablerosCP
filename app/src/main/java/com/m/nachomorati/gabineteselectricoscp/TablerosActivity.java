@@ -1,6 +1,5 @@
 package com.m.nachomorati.gabineteselectricoscp;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,10 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.Spinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,11 +27,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TablerosActivity extends AppCompatActivity {
     private ArrayList<Tablero> tableros;
     private ProgressBar pb;
     private ListView lvTableros;
+    private static Spinner spinnerSectores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +42,16 @@ public class TablerosActivity extends AppCompatActivity {
 
         pb = findViewById(R.id.progress_bar);
         lvTableros = findViewById(R.id.lv_tableros);
+        spinnerSectores = findViewById(R.id.sp_sectores);
 
-        //TablerosGetAsync getTableros = new TablerosGetAsync(getBaseContext());
         new TablerosGet(getBaseContext()).execute("https://script.google.com/macros/s/AKfycbwYPVxdR4RjkgUU4DIkJJFtjgB6kiaNbLuKUIc4JJtWhBbpCi7-/exec");
-
     }
 
     class TablerosGet extends AsyncTask<String, Integer, String> {
         private TablerosDBHelper dbHelper;
         private SQLiteDatabase db;
         private TablerosData tablerosData;
+        private List<String> list = new ArrayList<>();
 
         public TablerosGet(Context context){
             this.dbHelper = new TablerosDBHelper(context);
@@ -79,9 +80,26 @@ public class TablerosActivity extends AppCompatActivity {
 
                 resultado = stringBuilder.toString();
 
+                URL urlSectores = new URL("https://script.google.com/macros/s/AKfycbzBPQkEF8FWIdUzw1DdehNFNF_lTxPvaAVeIt1aU6euJ3NQBIyC/exec");
+                HttpURLConnection urlConnection1 = (HttpURLConnection) urlSectores.openConnection();
+                InputStream stream1 = new BufferedInputStream(urlConnection1.getInputStream());
+                BufferedReader bufferedReader1 = new BufferedReader(new InputStreamReader(stream1));
+
+                String json_sectores = bufferedReader1.readLine();
+                JSONArray jsonArray = new JSONArray(json_sectores);
+
+                for (int i = 0; i < jsonArray.length(); i++){
+                    list.add(jsonArray.getJSONObject(i).getString("nombre"));
+                }
+                //Log.d("jsonList", list.toString());
+
+
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -90,37 +108,30 @@ public class TablerosActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            //Log.i("resultado", s);
+            ///////////////////////////////////////////////////////////////////
+            //setear el spinner de sectores con los datos de la //////////////
+            //lista que trajimos del sheet //////////////////////////////////
+            ArrayAdapter<String> spinnerSectoresAdapter = new ArrayAdapter<String>(
+                    TablerosActivity.this,
+                    android.R.layout.simple_spinner_item,
+                    list
+            );
+            spinnerSectoresAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerSectores.setAdapter(spinnerSectoresAdapter);
+
+            /////////////////////////////////////////////////////////////////
+            //tomar el String con el json que trajimos del sheet,  /////////
+            //parsearlo y guardarlo en la bd local. ///////////////////////
             JSONArray array = null;
             try {
                 array = new JSONArray(s.toString());
                 for (int i = 0; i < array.length(); i++){
                     JSONObject tablero_json = (JSONObject) array.get(i);
 
-                    /*
-                    String num = tablero_json.getString("numero");
-
-                    //EN SQLITE LO VOY A GUARDAR COMO STRING SIN CONVERTIR
-                    String llavesStr = tablero_json.getString("llaves");
-                    //FUNCIONA:
-                    //ArrayList<Llave> llaves = Helper.strLlaves2ArrLst(tablero_json.getString("llaves"));
-
-                    boolean archflash = tablero_json.getBoolean("arch_flash");
-                    boolean cortocircuito = tablero_json.getBoolean("cortocircuito");
-                    boolean candado = tablero_json.getBoolean("candado_negro");
-                    boolean req_candado = tablero_json.getBoolean("requiere_candado");
-                    boolean contrafrente = tablero_json.getBoolean("contrafrente");
-                    boolean req_contrafrente = tablero_json.getBoolean("requiere_contrafrente");
-                    boolean identif = tablero_json.getBoolean("identificaciones");
-                    boolean en_plano_general = tablero_json.getBoolean("en_plano_general");
-                    String plano = tablero_json.getString("plano");
-                    //Log.i("datos", "numero: " + num + "\nllaves: " + llaves + "\narch: " + String.valueOf(archflash) + "\ncorto: " + String.valueOf(cortocircuito));
-
-
-                    */
-
                     ContentValues cv = new ContentValues();
+                    cv.put(TablerosContract.TablerosEntry.COLUMN_TITLE__ID, tablero_json.getInt("id"));
                     cv.put(TablerosContract.TablerosEntry.COLUMN_TITLE_NUMERO, tablero_json.getString("numero"));
+                    cv.put(TablerosContract.TablerosEntry.COLUMN_TITLE_SECTOR, tablero_json.getString("sector"));
                     cv.put(TablerosContract.TablerosEntry.COLUMN_TITLE_UBICACION, tablero_json.getString("ubicacion"));
                     cv.put(TablerosContract.TablerosEntry.COLUMN_TITLE_LLAVES, tablero_json.getString("llaves"));
                     cv.put(TablerosContract.TablerosEntry.COLUMN_TITLE_ARCH_FLASH, tablero_json.getBoolean("arch_flash"));
@@ -175,6 +186,7 @@ public class TablerosActivity extends AppCompatActivity {
 
             pb.setVisibility(View.INVISIBLE);
             lvTableros.setVisibility(View.VISIBLE);
+            spinnerSectores.setVisibility(View.VISIBLE);
 
         }
     }
